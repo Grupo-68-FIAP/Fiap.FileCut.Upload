@@ -12,19 +12,19 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Fiap.FileCut.UploadApi/Fiap.FileCut.UploadApi.csproj", "Fiap.FileCut.UploadApi/"]
-RUN dotnet restore "./Fiap.FileCut.UploadApi/Fiap.FileCut.UploadApi.csproj"
+COPY ["Fiap.FileCut.Upload.Api/Fiap.FileCut.Upload.Api.csproj", "Fiap.FileCut.Upload.Api/"]
+RUN dotnet restore "./Fiap.FileCut.Upload.Api/Fiap.FileCut.Upload.Api.csproj"
 COPY . .
-WORKDIR "/src/Fiap.FileCut.UploadApi"
-RUN dotnet build "./Fiap.FileCut.UploadApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Fiap.FileCut.Upload.Api"
+RUN dotnet build "./Fiap.FileCut.Upload.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Fiap.FileCut.UploadApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Fiap.FileCut.Upload.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Fiap.FileCut.UploadApi.dll"]
+ENTRYPOINT ["dotnet", "Fiap.FileCut.Upload.Api.dll"]
