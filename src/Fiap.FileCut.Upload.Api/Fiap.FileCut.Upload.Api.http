@@ -1,0 +1,6 @@
+@Fiap.FileCut.UploadApi_HostAddress = http://localhost:5049
+
+GET {{Fiap.FileCut.UploadApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
