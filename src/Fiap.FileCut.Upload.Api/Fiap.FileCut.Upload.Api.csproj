@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Fiap.FileCut\Fiap.FileCut.Infra.Api\Fiap.FileCut.Infra.Api.csproj" />
+    <ProjectReference Include="..\..\..\Fiap.FileCut.Processamento\libs\Fiap.FileCut\Fiap.FileCut.Infra.Api\Fiap.FileCut.Infra.Api.csproj" />
   </ItemGroup>
 
 </Project>

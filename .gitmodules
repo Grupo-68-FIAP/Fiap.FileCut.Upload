@@ -1,0 +1,3 @@
+[submodule "libs/Fiap.FileCut"]
+	path = libs/Fiap.FileCut
+	url = https://github.com/Grupo-68-FIAP/Fiap.FileCut.git
