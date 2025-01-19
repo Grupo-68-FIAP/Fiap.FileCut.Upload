@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 		.env-sample = .env-sample
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
+		.github\workflows\sonarcloud.yml = .github\workflows\sonarcloud.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fiap.FileCut.Infra.Api", "..\Fiap.FileCut.Processamento\libs\Fiap.FileCut\Fiap.FileCut.Infra.Api\Fiap.FileCut.Infra.Api.csproj", "{6C7E63F2-7E47-463D-B3A3-1DF617865F1E}"
