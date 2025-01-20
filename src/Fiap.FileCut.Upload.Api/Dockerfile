@@ -16,7 +16,6 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Fiap.FileCut.Upload.Api/Fiap.FileCut.Upload.Api.csproj", "Fiap.FileCut.Upload.Api/"]
 RUN dotnet restore "./Fiap.FileCut.Upload.Api/Fiap.FileCut.Upload.Api.csproj"
-COPY . .
 WORKDIR "/src/Fiap.FileCut.Upload.Api"
 RUN dotnet build "./Fiap.FileCut.Upload.Api.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 
