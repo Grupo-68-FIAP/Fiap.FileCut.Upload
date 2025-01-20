@@ -16,12 +16,12 @@ COPY ["Fiap.FileCut.Upload.Api/Fiap.FileCut.Upload.Api.csproj", "Fiap.FileCut.Up
 RUN dotnet restore "./Fiap.FileCut.Upload.Api/Fiap.FileCut.Upload.Api.csproj"
 COPY . .
 WORKDIR "/src/Fiap.FileCut.Upload.Api"
-RUN dotnet build "./Fiap.FileCut.Upload.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Fiap.FileCut.Upload.Api.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Fiap.FileCut.Upload.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Fiap.FileCut.Upload.Api.csproj" -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
 
 # Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
 FROM base AS final
