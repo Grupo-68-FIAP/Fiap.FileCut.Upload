@@ -1,0 +1,21 @@
+services:
+  fiap.filecut.upload.api:
+    depends_on:
+      - rabbitmq
+      - keycloak
+    image: ${DOCKER_REGISTRY-}fiapfilecutuploadapi
+    build:
+      context: .
+      dockerfile: src/Fiap.FileCut.Upload.Api/Dockerfile
+
+  fakemail:
+    image: haravich/fake-smtp-server
+    restart: always
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    restart: always
