@@ -1,5 +1,6 @@
 services:
   fiap.filecut.upload.api:
+    container_name: upload-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
