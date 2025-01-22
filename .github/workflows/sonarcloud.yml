@@ -48,9 +48,6 @@ jobs:
       - name: Project restore dependencies
         run: dotnet restore "Fiap.FileCut.Upload.sln"
 
-      - name: Project build 
-        run: dotnet build "Fiap.FileCut.Upload.sln"
-
       - name: Sonar analyze begin
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -58,6 +55,9 @@ jobs:
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"Grupo-68-FIAP_Fiap.FileCut.Upload" /o:"grupo-68-fiap" /d:sonar.token="$env:SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io"  /d:sonar.cs.vscoveragexml.reportsPaths="**.coveragexml" /d:sonar.cs.vstest.reportsPaths="**.trx"
 
+      - name: Project build 
+        run: dotnet build "Fiap.FileCut.Upload.sln"
+        
       - name: Project test and coverage
         shell: powershell
         run: |
