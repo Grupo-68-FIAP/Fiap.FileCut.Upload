@@ -1,5 +1,4 @@
-
-using Fiap.FileCut.Infra.Api.Configurations;
+//using Fiap.FileCut.Infra.Api.Configurations;
 
 namespace Fiap.FileCut.Upload.Api
 {
@@ -9,14 +8,12 @@ namespace Fiap.FileCut.Upload.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddJwtBearerAuthentication();
+            //builder.Services.AddJwtBearerAuthentication();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddEnvCors();
+            //builder.Services.AddEnvCors();
 
             var app = builder.Build();
 
@@ -27,11 +24,11 @@ namespace Fiap.FileCut.Upload.Api
                 app.UseSwaggerUI();
             }
 
-            app.UseEnvCors();
+           // app.UseEnvCors();
 
             app.UseHttpsRedirection();
 
-            app.UseAuth();
+            //app.UseAuth();
 
             app.MapControllers();
 
