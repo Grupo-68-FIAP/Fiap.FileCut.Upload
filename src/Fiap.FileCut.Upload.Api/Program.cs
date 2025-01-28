@@ -1,41 +1,25 @@
+using Fiap.FileCut.Infra.Api;
 
-using Fiap.FileCut.Infra.Api.Configurations;
+namespace Fiap.FileCut.Upload.Api;
 
-namespace Fiap.FileCut.Upload.Api
+public static class Program
 {
-    public static class Program
+    public static async Task Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        await builder.Services.ConfigureFileCutUploadApi();
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddJwtBearerAuthentication();
-            builder.Services.AddSwaggerGen();
-            builder.Services.AddEnvCors();
+        var app = builder.Build();
 
-            var app = builder.Build();
+        await app.InitializeFileCutUploadApi();
+        app.MapControllers();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+        var scope = app.Services.CreateScope();
+        await scope.ScopedFileCutUploadApi();
 
-            app.UseEnvCors();
-
-            app.UseHttpsRedirection();
-
-            app.UseAuth();
-
-            app.MapControllers();
-
-            app.Run();
-        }
+        await app.RunAsync();
     }
 }
