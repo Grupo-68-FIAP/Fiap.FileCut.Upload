@@ -1,58 +1,104 @@
-﻿using Fiap.FileCut.Upload.Api.Infra.Configs;
-using Fiap.FileCut.Upload.Api.Infra.Interfaces;
-using FluentValidation;
-using Microsoft.Extensions.Options;
+﻿using Fiap.FileCut.Upload.Api.Infra.Interfaces;
 
 namespace Fiap.FileCut.Upload.Api.Infra
 {
-	public class S3FileStorageService : IFileStorageService
+	public class FileService : IFileService
 	{
-		private readonly S3Configs _s3Configs;
-		private readonly IValidator<IFormFile> _fileValidator;
+		private readonly IFileRepository _fileRepository;
+		private readonly ILogger<FileService> _logger;
 
-		public S3FileStorageService(IOptions<S3Configs> s3Configs, IValidator<IFormFile> fileValidator)
+		public FileService(
+			IFileRepository fileRepository,
+			ILogger<FileService> logger)
 		{
-			_s3Configs = s3Configs.Value;
-			_fileValidator = fileValidator;
+			_fileRepository = fileRepository;
+			_logger = logger;
 		}
 
-		public async Task<string> UploadFileAsync(IFormFile file, Guid userId)
+		public async Task<bool> DeleteFileAsync(Guid userId, string fileName, CancellationToken cancellationToken)
 		{
-			var validationResult = await _fileValidator.ValidateAsync(file);
-			if (!validationResult.IsValid)
+			try
 			{
-				throw new InvalidOperationException(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+				_logger.LogInformation("[{source}] - Starting file deletion. User: {UserId}, File: {FileName}", nameof(FileService), userId, fileName);
+
+				var result = await _fileRepository.DeleteAsync(userId, fileName, cancellationToken);
+
+				if (result)
+					_logger.LogInformation("[{source}] - File deleted successfully. User: {UserId}, File: {FileName}", nameof(FileService), userId, fileName);
+				else
+					_logger.LogWarning("[{source}] - Failed to delete file. User: {UserId}, File: {FileName}", nameof(FileService), userId, fileName);
+
+				return result;
 			}
-
-			var safeFileName = GenerateSafeFileName(file, userId);
-			var filePath = await SaveFileAsync(file, safeFileName);
-
-			return $"{_s3Configs.S3Url}/{_s3Configs.BucketName}/{safeFileName}";
-		}
-
-		private string GenerateSafeFileName(IFormFile file, Guid userId)
-		{
-			var fileExtension = Path.GetExtension(file.FileName);
-			var safeFileName = $"{userId}_{Guid.NewGuid()}{fileExtension}";
-			return safeFileName;
-		}
-
-		private async Task<string> SaveFileAsync(IFormFile file, string fileName)
-		{
-			var filePath = Path.Combine(Directory.GetCurrentDirectory(), "UploadedVideos", fileName);
-			filePath = Path.GetFullPath(filePath);
-
-			if (!filePath.StartsWith(Path.GetFullPath(Directory.GetCurrentDirectory())))
-				throw new InvalidOperationException("Caminho de arquivo inválido.");
-
-			Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-
-			using (var stream = new FileStream(filePath, FileMode.Create))
+			catch (Exception ex)
 			{
-				await file.CopyToAsync(stream);
+				_logger.LogError(ex, "[{source}] - Unexpected error while deleting file. User: {UserId}, File: {FileName}", nameof(FileService), userId, fileName);
+				throw;
 			}
+		}
 
-			return filePath;
+		public async Task<IFormFile> GetFileAsync(Guid userId, string fileName, CancellationToken cancellationToken)
+		{
+			try
+			{
+				_logger.LogInformation("[{source}] - Starting file download. User: {UserId}, File: {FileName}", nameof(FileService), userId, fileName);
+
+				return await _fileRepository.GetAsync(userId, fileName, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "[{source}] - Error while getting the file. User: {UserId}, File: {FileName}", nameof(FileService), userId, fileName);
+				throw;
+			}
+		}
+
+		public async Task<IList<string>> GetFileNamesAsync(Guid userId, CancellationToken cancellationToken)
+		{
+			try
+			{
+				_logger.LogInformation("[{source}] - Starting file name listing. User: {UserId}", nameof(FileService), userId);
+
+				var files = await _fileRepository.GetAllAsync(userId, cancellationToken);
+				var fileNames = files.Select(file => file.FileName).ToList();
+
+				_logger.LogInformation("[{source}] - Successfully listed {FileCount} file names for user {UserId}", nameof(FileService), fileNames.Count(), userId);
+
+				return fileNames;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "[{source}] - Error while listing file names. User: {UserId}", nameof(FileService), userId);
+				throw;
+			}
+		}
+
+		public async Task<bool> SaveFileAsync(Guid userId, IFormFile file, CancellationToken cancellationToken)
+		{
+			try
+			{
+				if (file.Length <= 0)
+					throw new ArgumentException("Invalid file size");
+
+				_logger.LogInformation("[{source}] - Starting file upload. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
+
+				var result = await _fileRepository.UpdateAsync(userId, file, cancellationToken);
+				if (result)
+					_logger.LogInformation("[{source}] - File saved successfully. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
+				else
+					_logger.LogWarning("[{source}] - Failed to save file. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
+
+				return result;
+			}
+			catch (ArgumentException ex)
+			{
+				_logger.LogError(ex, "[{source}] - Validation error while saving file. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
+				throw;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "[{source}] - Unexpected error while saving file. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
+				throw;
+			}
 		}
 	}
 }

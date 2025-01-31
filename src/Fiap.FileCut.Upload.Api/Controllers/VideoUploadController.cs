@@ -7,9 +7,9 @@ namespace Fiap.FileCut.Upload.Api.Controllers
 	[ApiController]
 	public class VideoUploadController : ControllerBase
 	{
-		private readonly IFileStorageService _fileStorageService;
+		private readonly IFileService _fileStorageService;
 
-		public VideoUploadController(IFileStorageService fileStorageService)
+		public VideoUploadController(IFileService fileStorageService)
 		{
 			_fileStorageService = fileStorageService;
 		}
@@ -23,7 +23,7 @@ namespace Fiap.FileCut.Upload.Api.Controllers
 
 			try
 			{
-				var uploadedFileUrl = await _fileStorageService.UploadFileAsync(file, userId);
+				var uploadedFileUrl = await _fileStorageService.SaveFileAsync(file, userId);
 				return Ok(new { FileUrl = uploadedFileUrl });
 			}
 			catch (InvalidOperationException ex)
