@@ -1,8 +1,7 @@
 ﻿using Fiap.FileCut.Core.Interfaces.Repository;
 using Fiap.FileCut.Core.Interfaces.Services;
 using Fiap.FileCut.Core.Objects;
-using Fiap.FileCut.Core.Services;
-using Fiap.FileCut.Upload.Api.Infra.Interfaces;
+using Fiap.FileCut.Core.Services; 
 
 namespace Fiap.FileCut.Upload.Api.Infra
 {
@@ -97,7 +96,7 @@ namespace Fiap.FileCut.Upload.Api.Infra
 
 				_logger.LogInformation("[{source}] - File saved successfully. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
 
-				var messageContext = new NotifyContext<string>($"Arquivo {file.FileName} foi carregado para o usuário {userId}.");
+				var messageContext = new NotifyContext<string>("Teste", Guid.NewGuid());
 				await _notifyService.NotifyAsync(messageContext);
 
 				return result;

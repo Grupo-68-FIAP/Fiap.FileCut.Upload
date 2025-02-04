@@ -1,4 +1,4 @@
-﻿using Fiap.FileCut.Upload.Api.Infra.Interfaces;
+﻿using Fiap.FileCut.Core.Interfaces.Services; 
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fiap.FileCut.Upload.Api.Controllers
