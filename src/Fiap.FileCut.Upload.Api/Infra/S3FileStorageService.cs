@@ -1,19 +1,25 @@
 ﻿using Fiap.FileCut.Core.Interfaces.Repository;
+using Fiap.FileCut.Core.Interfaces.Services;
+using Fiap.FileCut.Core.Objects;
+using Fiap.FileCut.Core.Services;
 using Fiap.FileCut.Upload.Api.Infra.Interfaces;
 
 namespace Fiap.FileCut.Upload.Api.Infra
 {
-	public class FileService : IFileService
+	public class S3FileStorageService : IFileService
 	{
 		private readonly IFileRepository _fileRepository;
-		private readonly ILogger<FileService> _logger;
+		private readonly ILogger<S3FileStorageService> _logger;
+		private readonly INotifyService _notifyService;
 
-		public FileService(
+		public S3FileStorageService(
 			IFileRepository fileRepository,
-			ILogger<FileService> logger)
+			ILogger<S3FileStorageService> logger,
+			INotifyService notifyService)
 		{
 			_fileRepository = fileRepository;
 			_logger = logger;
+			_notifyService = notifyService;
 		}
 
 		public async Task<bool> DeleteFileAsync(Guid userId, string fileName, CancellationToken cancellationToken)
@@ -83,10 +89,16 @@ namespace Fiap.FileCut.Upload.Api.Infra
 				_logger.LogInformation("[{source}] - Starting file upload. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
 
 				var result = await _fileRepository.UpdateAsync(userId, file, cancellationToken);
-				if (result)
-					_logger.LogInformation("[{source}] - File saved successfully. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
-				else
+				if (!result)
+				{
 					_logger.LogWarning("[{source}] - Failed to save file. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
+					return result;
+				}
+
+				_logger.LogInformation("[{source}] - File saved successfully. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
+
+				var messageContext = new NotifyContext<string>($"Arquivo {file.FileName} foi carregado para o usuário {userId}.");
+				await _notifyService.NotifyAsync(messageContext);
 
 				return result;
 			}
