@@ -23,7 +23,7 @@ namespace Fiap.FileCut.Upload.Api.Controllers
 
 			try
 			{
-				var uploadedFileUrl = await _fileStorageService.SaveFileAsync(file, userId);
+				var uploadedFileUrl = await _fileStorageService.SaveFileAsync(userId, file, CancellationToken.None);
 				return Ok(new { FileUrl = uploadedFileUrl });
 			}
 			catch (InvalidOperationException ex)

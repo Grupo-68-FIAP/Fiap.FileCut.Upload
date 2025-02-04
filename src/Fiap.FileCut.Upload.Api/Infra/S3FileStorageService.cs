@@ -1,4 +1,5 @@
-﻿using Fiap.FileCut.Upload.Api.Infra.Interfaces;
+﻿using Fiap.FileCut.Core.Interfaces.Repository;
+using Fiap.FileCut.Upload.Api.Infra.Interfaces;
 
 namespace Fiap.FileCut.Upload.Api.Infra
 {
@@ -21,7 +22,7 @@ namespace Fiap.FileCut.Upload.Api.Infra
 			{
 				_logger.LogInformation("[{source}] - Starting file deletion. User: {UserId}, File: {FileName}", nameof(FileService), userId, fileName);
 
-				var result = await _fileRepository.DeleteAsync(userId, fileName, cancellationToken);
+				var result = await _fileRepository.DeleteAsync(userId, fileName);
 
 				if (result)
 					_logger.LogInformation("[{source}] - File deleted successfully. User: {UserId}, File: {FileName}", nameof(FileService), userId, fileName);
@@ -43,7 +44,7 @@ namespace Fiap.FileCut.Upload.Api.Infra
 			{
 				_logger.LogInformation("[{source}] - Starting file download. User: {UserId}, File: {FileName}", nameof(FileService), userId, fileName);
 
-				return await _fileRepository.GetAsync(userId, fileName, cancellationToken);
+				return await _fileRepository.GetAsync(userId, fileName);
 			}
 			catch (Exception ex)
 			{
@@ -58,7 +59,7 @@ namespace Fiap.FileCut.Upload.Api.Infra
 			{
 				_logger.LogInformation("[{source}] - Starting file name listing. User: {UserId}", nameof(FileService), userId);
 
-				var files = await _fileRepository.GetAllAsync(userId, cancellationToken);
+				var files = await _fileRepository.GetAllAsync(userId);
 				var fileNames = files.Select(file => file.FileName).ToList();
 
 				_logger.LogInformation("[{source}] - Successfully listed {FileCount} file names for user {UserId}", nameof(FileService), fileNames.Count(), userId);
@@ -81,7 +82,7 @@ namespace Fiap.FileCut.Upload.Api.Infra
 
 				_logger.LogInformation("[{source}] - Starting file upload. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
 
-				var result = await _fileRepository.UpdateAsync(userId, file, cancellationToken);
+				var result = await _fileRepository.UpdateAsync(userId, file);
 				if (result)
 					_logger.LogInformation("[{source}] - File saved successfully. User: {UserId}, File: {FileName}", nameof(FileService), userId, file.FileName);
 				else
