@@ -1,4 +1,4 @@
-﻿using Fiap.FileCut.Core.Interfaces.Services; 
+﻿using Fiap.FileCut.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fiap.FileCut.Upload.Api.Controllers
@@ -23,8 +23,8 @@ namespace Fiap.FileCut.Upload.Api.Controllers
 
 			try
 			{
-				var uploadedFileUrl = await _fileStorageService.SaveFileAsync(userId, file, CancellationToken.None);
-				return Ok(new { FileUrl = uploadedFileUrl });
+				bool uploaded = await _fileStorageService.SaveFileAsync(userId, file, CancellationToken.None);
+				return Ok(new { Success = uploaded });
 			}
 			catch (InvalidOperationException ex)
 			{
