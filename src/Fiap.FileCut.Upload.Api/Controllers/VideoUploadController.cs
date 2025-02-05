@@ -16,14 +16,14 @@ namespace Fiap.FileCut.Upload.Api.Controllers
 
 		[HttpPost("upload")]
 		[Produces("application/json")]
-		public async Task<IActionResult> UploadVideo([FromForm] IFormFile file, [FromForm] Guid userId)
+		public async Task<IActionResult> UploadVideo([FromForm] Stream fileStream, [FromForm] string fileName, [FromForm] Guid userId)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
 
 			try
 			{
-				bool uploaded = await _fileStorageService.SaveFileAsync(userId, file, CancellationToken.None);
+				bool uploaded = await _fileStorageService.SaveFileAsync(userId, fileName, fileStream, CancellationToken.None);
 				return Ok(new { Success = uploaded });
 			}
 			catch (InvalidOperationException ex)
