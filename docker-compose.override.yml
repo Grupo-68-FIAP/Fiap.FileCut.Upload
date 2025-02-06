@@ -12,16 +12,12 @@ services:
       - SMTP_SERVER=fakemail
       - SMTP_PORT=1025
       - SMTP_USERNAME=fakemail-noreplay@test.com
-
-      - RABBITMQ_CONNECTION_STRING=amqp://admin:admin@rabbitmq:5672
     ports:
       - "8080"
       - "8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-    networks:
-      - local_network
 
   fakemail:
     container_name: fakemail
