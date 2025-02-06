@@ -32,6 +32,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fiap.FileCut.Infra.RabbitMq", "libs\Fiap.FileCut\Fiap.FileCut.Infra.RabbitMq\Fiap.FileCut.Infra.RabbitMq.csproj", "{6051F1BE-44AD-48D0-B07F-2480A775052B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fiap.FileCut.Infra.IdentityProvider", "libs\Fiap.FileCut\Fiap.FileCut.Infra.IdentityProvider\Fiap.FileCut.Infra.IdentityProvider.csproj", "{560D020E-41F9-8AA6-2D07-23D08AC4DC20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{6051F1BE-44AD-48D0-B07F-2480A775052B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6051F1BE-44AD-48D0-B07F-2480A775052B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6051F1BE-44AD-48D0-B07F-2480A775052B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{560D020E-41F9-8AA6-2D07-23D08AC4DC20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{560D020E-41F9-8AA6-2D07-23D08AC4DC20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{560D020E-41F9-8AA6-2D07-23D08AC4DC20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{560D020E-41F9-8AA6-2D07-23D08AC4DC20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,5 +83,9 @@ Global
 		{1D369A88-2DB7-4149-9572-0727CB9E4D15} = {9973AFB1-D1E6-4A85-BBBB-026D18FD0294}
 		{54981C3D-77CA-4A9E-A0D9-AD4C500A54D9} = {9973AFB1-D1E6-4A85-BBBB-026D18FD0294}
 		{6051F1BE-44AD-48D0-B07F-2480A775052B} = {9973AFB1-D1E6-4A85-BBBB-026D18FD0294}
+		{560D020E-41F9-8AA6-2D07-23D08AC4DC20} = {9973AFB1-D1E6-4A85-BBBB-026D18FD0294}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2E22EA93-CACE-4906-8B77-7AE58C551254}
 	EndGlobalSection
 EndGlobal

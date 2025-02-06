@@ -8,6 +8,7 @@ services:
       
       - OPENID_AUTHORITY=http://keycloak:8080/realms/sample
       - OPENID_AUDIENCE=admin-cli
+      - OPENID_SECRET=ggHA5bduwAAv3dQDw5JOJYwyW75wrUZI
 
       - SMTP_SERVER=fakemail
       - SMTP_PORT=1025
