@@ -1,4 +1,4 @@
-using Fiap.FileCut.Core.Interfaces.Services;
+using Fiap.FileCut.Core.Interfaces.Applications;
 using Fiap.FileCut.Upload.Api.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,12 +8,12 @@ namespace Fiap.FileCut.Upload.Api.UnitTests.Controllers;
 
 public class VideoUploadControllerTests
 {
-    private readonly Mock<IFileService> _fileServiceMock;
+    private readonly Mock<IUploadApplication> _fileServiceMock;
     private readonly VideoUploadController _controller;
 
     public VideoUploadControllerTests()
     {
-        _fileServiceMock = new Mock<IFileService>();
+        _fileServiceMock = new Mock<IUploadApplication>();
         _controller = new VideoUploadController(_fileServiceMock.Object);
     }
 
@@ -32,7 +32,7 @@ public class VideoUploadControllerTests
 
         // Mock do serviço de arquivo para salvar
         _fileServiceMock
-            .Setup(s => s.SaveFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken))
+            .Setup(s => s.UploadFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken))
             .ReturnsAsync(true);
 
         // Act
@@ -41,7 +41,7 @@ public class VideoUploadControllerTests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
-        _fileServiceMock.Verify(s => s.SaveFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken), Times.Once);
+        _fileServiceMock.Verify(s => s.UploadFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class VideoUploadControllerTests
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        _fileServiceMock.Verify(s => s.SaveFileAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()), Times.Never);
+        _fileServiceMock.Verify(s => s.UploadFileAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class VideoUploadControllerTests
         var cancellationToken = CancellationToken.None;
 
         _fileServiceMock
-            .Setup(s => s.SaveFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken))
+            .Setup(s => s.UploadFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken))
             .ThrowsAsync(new InvalidOperationException("Upload failed"));
 
         // Act
@@ -82,6 +82,6 @@ public class VideoUploadControllerTests
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         dynamic? response = badRequestResult?.Value;
         Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult?.StatusCode);
-        _fileServiceMock.Verify(s => s.SaveFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken), Times.Once);
+        _fileServiceMock.Verify(s => s.UploadFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken), Times.Once);
     }
 }
