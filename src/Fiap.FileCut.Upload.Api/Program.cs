@@ -1,25 +1,27 @@
 using Fiap.FileCut.Infra.Api;
 
-namespace Fiap.FileCut.Upload.Api;
-
-public static class Program
+namespace Fiap.FileCut.Upload.Api
 {
-    public static async Task Main(string[] args)
+	public static class Program
     {
-        var builder = WebApplication.CreateBuilder(args);
+        public static async Task Main(string[] args)
+        {
+			var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        await builder.Services.ConfigureFileCutUploadApi();
+			builder.Services.AddControllers();
+			builder.Services.AddEndpointsApiExplorer();
 
-        var app = builder.Build();
+			await builder.Services.ConfigureFileCutUploadApi();
 
-        await app.InitializeFileCutUploadApi();
-        app.MapControllers();
+			var app = builder.Build();
 
-        var scope = app.Services.CreateScope();
-        await scope.ScopedFileCutUploadApi();
+			await app.InitializeFileCutUploadApi();
+			app.MapControllers();
 
-        await app.RunAsync();
+			var scope = app.Services.CreateScope();
+			await scope.ScopedFileCutUploadApi();
+
+			await app.RunAsync();
+		}
     }
 }
