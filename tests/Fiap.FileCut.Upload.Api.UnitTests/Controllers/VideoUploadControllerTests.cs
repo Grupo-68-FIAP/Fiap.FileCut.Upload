@@ -3,18 +3,19 @@ using Fiap.FileCut.Upload.Api.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.IO;
 
 namespace Fiap.FileCut.Upload.Api.UnitTests.Controllers;
 
 public class VideoUploadControllerTests
 {
-    private readonly Mock<IUploadApplication> _fileServiceMock;
+    private readonly Mock<IUploadApplication> _uploadApplicationMock;
     private readonly VideoUploadController _controller;
 
     public VideoUploadControllerTests()
     {
-        _fileServiceMock = new Mock<IUploadApplication>();
-        _controller = new VideoUploadController(_fileServiceMock.Object);
+        _uploadApplicationMock = new Mock<IUploadApplication>();
+        _controller = new VideoUploadController(_uploadApplicationMock.Object);
     }
 
     [Fact]
@@ -25,41 +26,42 @@ public class VideoUploadControllerTests
         var fileName = "test.mp4";
         var stream = new MemoryStream();
         var cancellationToken = CancellationToken.None;
+        _controller.SetUserAuth(userId, "admin@test.com");
 
         // Mock do IFormFile como um Stream
-        var fileStreamMock = new Mock<Stream>();
-        fileStreamMock.Setup(f => f.Length).Returns(stream.Length);
+        var fileMock = new Mock<IFormFile>();
+        fileMock.Setup(f => f.FileName).Returns(fileName);
+        fileMock.Setup(f => f.Length).Returns(stream.Length);
 
         // Mock do serviço de arquivo para salvar
-        _fileServiceMock
+        _uploadApplicationMock
             .Setup(s => s.UploadFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken))
             .ReturnsAsync(true);
 
         // Act
-        var result = await _controller.UploadVideo(fileStreamMock.Object, fileName, userId);
+        var result = await _controller.UploadVideo(fileMock.Object);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
-        _fileServiceMock.Verify(s => s.UploadFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken), Times.Once);
+        _uploadApplicationMock.Verify(s => s.UploadFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken), Times.Once);
     }
 
     [Fact]
     public async Task UploadVideo_WhenModelStateIsInvalid_ShouldReturnBadRequest()
     {
         // Arrange
+        var mockFile = new Mock<IFormFile>();
+        mockFile.Setup(f => f.FileName).Returns("test.mp4");
         _controller.ModelState.AddModelError("file", "Required");
-        var userId = Guid.NewGuid();
-        var fileName = "test.mp4";
-        var fileStream = new Mock<Stream>();
-        var cancellationToken = CancellationToken.None;
 
         // Act
-        var result = await _controller.UploadVideo(fileStream.Object, fileName, userId);
+        var result = await _controller.UploadVideo(mockFile.Object);
 
         // Assert
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        _fileServiceMock.Verify(s => s.UploadFileAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = Assert.IsType<BadRequestObjectResult>(result);
+        _uploadApplicationMock.Verify(s => s.UploadFileAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()), Times.Never);
+        _ = Assert.IsType<BadRequestObjectResult>(result);
     }
 
     [Fact]
@@ -68,20 +70,21 @@ public class VideoUploadControllerTests
         // Arrange
         var userId = Guid.NewGuid();
         var fileName = "test.mp4";
-        var fileStream = new Mock<Stream>();
+        var mockFile = new Mock<IFormFile>();
+        mockFile.Setup(f => f.FileName).Returns(fileName);
         var cancellationToken = CancellationToken.None;
 
-        _fileServiceMock
+        _uploadApplicationMock
             .Setup(s => s.UploadFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken))
             .ThrowsAsync(new InvalidOperationException("Upload failed"));
+        _controller.SetUserAuth(userId, "admin@test.com");
 
         // Act
-        var result = await _controller.UploadVideo(fileStream.Object, fileName, userId);
+        var result = await _controller.UploadVideo(mockFile.Object);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        dynamic? response = badRequestResult?.Value;
         Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult?.StatusCode);
-        _fileServiceMock.Verify(s => s.UploadFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken), Times.Once);
+        _uploadApplicationMock.Verify(s => s.UploadFileAsync(userId, fileName, It.IsAny<Stream>(), cancellationToken), Times.Once);
     }
 }

@@ -11,7 +11,7 @@ namespace Fiap.FileCut.Upload.Api
 			builder.Services.AddControllers();
 			builder.Services.AddEndpointsApiExplorer();
 
-			await builder.Services.ConfigureFileCutUploadApi();
+			await builder.ConfigureFileCutUploadApi();
 
 			var app = builder.Build();
 
