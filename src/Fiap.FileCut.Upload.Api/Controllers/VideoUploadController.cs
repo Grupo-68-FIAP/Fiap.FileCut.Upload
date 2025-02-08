@@ -1,4 +1,5 @@
-﻿using Fiap.FileCut.Core.Interfaces.Services;
+﻿using Fiap.FileCut.Core.Interfaces.Applications;
+using Fiap.FileCut.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fiap.FileCut.Upload.Api.Controllers
@@ -7,12 +8,12 @@ namespace Fiap.FileCut.Upload.Api.Controllers
 	[ApiController]
 	public class VideoUploadController : ControllerBase
 	{
-		private readonly IFileService _fileStorageService;
+		private readonly IUploadApplication _uploadApplication;
 
-		public VideoUploadController(IFileService fileStorageService)
+		public VideoUploadController(IUploadApplication uploadApplication)
 		{
-			_fileStorageService = fileStorageService;
-		}
+            this._uploadApplication = uploadApplication;
+        }
 
 		[HttpPost("upload")]
 		[Produces("application/json")]
@@ -23,7 +24,7 @@ namespace Fiap.FileCut.Upload.Api.Controllers
 
 			try
 			{
-				bool uploaded = await _fileStorageService.SaveFileAsync(userId, fileName, fileStream, CancellationToken.None);
+				bool uploaded = await _uploadApplication.UploadFileAsync(userId, fileName, fileStream, CancellationToken.None);
 				return Ok(new { Success = uploaded });
 			}
 			catch (InvalidOperationException ex)
