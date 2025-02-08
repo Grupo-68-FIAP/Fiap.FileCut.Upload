@@ -18,6 +18,8 @@ COPY ["libs/Fiap.FileCut/Fiap.FileCut.Infra.Api", "../../libs/Fiap.FileCut/Fiap.
 COPY ["libs/Fiap.FileCut/Fiap.FileCut.Core", "../../libs/Fiap.FileCut/Fiap.FileCut.Core"]
 COPY ["libs/Fiap.FileCut/Fiap.FileCut.Infra.RabbitMq", "../../libs/Fiap.FileCut/Fiap.FileCut.Infra.RabbitMq"]
 COPY ["libs/Fiap.FileCut/Fiap.FileCut.Infra.Storage", "../../libs/Fiap.FileCut/Fiap.FileCut.Infra.Storage"]
+COPY ["libs/Fiap.FileCut/Fiap.FileCut.Infra.IdentityProvider", "../../libs/Fiap.FileCut/Fiap.FileCut.Infra.IdentityProvider"]
+COPY ["libs/Fiap.FileCut/Fiap.FileCut.Processing", "../../libs/Fiap.FileCut/Fiap.FileCut.Processing"]
 COPY ["src/Fiap.FileCut.Upload.Api", "Fiap.FileCut.Upload.Api"]
 RUN dotnet restore "./Fiap.FileCut.Upload.Api/Fiap.FileCut.Upload.Api.csproj"
 WORKDIR "/src/Fiap.FileCut.Upload.Api"
